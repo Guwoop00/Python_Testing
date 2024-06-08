@@ -1,4 +1,5 @@
 import json
+from datetime import datetime
 from flask import Flask, render_template, request, redirect, flash, url_for
 
 
@@ -19,6 +20,12 @@ app.secret_key = 'something_special'
 
 competitions = loadCompetitions()
 clubs = loadClubs()
+date_now = datetime.now()
+
+
+@app.template_filter()
+def to_datetime(value):
+    return datetime.strptime(value, '%Y-%m-%d %H:%M:%S')
 
 
 @app.route('/')
@@ -30,7 +37,7 @@ def index():
 def showSummary():
     try:
         club = [club for club in clubs if club['email'] == request.form['email']][0]
-        return render_template('welcome.html', club=club, competitions=competitions)
+        return render_template('welcome.html', club=club, competitions=competitions, date_now=date_now)
     except IndexError:
         return redirect(url_for('index'))
 
@@ -43,7 +50,7 @@ def book(competition, club):
         return render_template('booking.html', club=foundClub, competition=foundCompetition)
     else:
         flash("Something went wrong-please try again")
-        return render_template('welcome.html', club=club, competitions=competitions)
+        return render_template('welcome.html', club=club, competitions=competitions, date_now=date_now)
 
 
 @app.route('/purchasePlaces', methods=['POST'])
@@ -62,7 +69,7 @@ def purchasePlaces():
     else:
         competition['numberOfPlaces'] = int(competition['numberOfPlaces'])-placesRequired
         flash('Great-booking complete!')
-    return render_template('welcome.html', club=club, competitions=competitions)
+    return render_template('welcome.html', club=club, competitions=competitions, date_now=date_now)
 
 
 # TODO: Add route for points display
