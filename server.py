@@ -30,28 +30,33 @@ def to_datetime(value):
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('index.html', clubs=clubs)
 
 
 @app.route('/showSummary', methods=['POST'])
 def showSummary():
     try:
         club = [club for club in clubs if club['email'] == request.form['email']][0]
-        return render_template('welcome.html', club=club, competitions=competitions, date_now=date_now)
+        sorted_competitions = sorted(competitions, key=lambda x: to_datetime(x['date']), reverse=True)
+        return render_template('welcome.html', club=club, competitions=sorted_competitions, date_now=date_now)
     except IndexError:
-        flash("Email not found")
-        return redirect(url_for('index'))
+        if request.form['email'] == '':
+            flash("Please enter a valid email.")
+        else:
+            flash("Email not found")
+        return render_template('index.html', clubs=clubs), 401
 
 
 @app.route('/book/<competition>/<club>')
 def book(competition, club):
     foundClub = [c for c in clubs if c['name'] == club][0]
     foundCompetition = [c for c in competitions if c['name'] == competition][0]
+    sorted_competitions = sorted(competitions, key=lambda x: to_datetime(x['date']), reverse=True)
     if foundClub and foundCompetition:
         return render_template('booking.html', club=foundClub, competition=foundCompetition)
     else:
         flash("Something went wrong-please try again")
-        return render_template('welcome.html', club=club, competitions=competitions, date_now=date_now)
+        return render_template('welcome.html', club=club, competitions=sorted_competitions, date_now=date_now)
 
 
 @app.route('/purchasePlaces', methods=['POST'])
@@ -71,12 +76,10 @@ def purchasePlaces():
         competition['numberOfPlaces'] = int(competition['numberOfPlaces'])-placesRequired
         club["points"] = int(club["points"]) - placesRequired
         flash('Great-booking complete!')
-    return render_template('welcome.html', club=club, competitions=competitions, date_now=date_now)
-
-
-# TODO: Add route for points display
+    sorted_competitions = sorted(competitions, key=lambda x: to_datetime(x['date']), reverse=True)
+    return render_template('welcome.html', club=club, competitions=sorted_competitions, date_now=date_now)
 
 
 @app.route('/logout')
 def logout():
-    return redirect(url_for('index'))
+    return redirect(url_for('index', clubs=clubs))
