@@ -36,3 +36,17 @@ def test_clubs_cannot_use_more_points_than_allowed(client, clubs, competitions):
         'places': '6'
     })
     assert response.status_code == 200
+
+
+def test_clubs_cannot_book_more_than_12_places_per_competition(client, clubs, competitions):
+    club = clubs[0]
+    club['points'] = 100
+    competition = competitions[0]
+    competition['numberOfPlaces'] = 15
+
+    response = client.post('/purchasePlaces', data={
+        'competition': competition['name'],
+        'club': club['name'],
+        'places': '13'
+    })
+    assert response.status_code == 200
