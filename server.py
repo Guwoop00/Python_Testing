@@ -48,7 +48,6 @@ def book(competition, club):
         return render_template('welcome.html', club=club, competitions=sorted_competitions, date_now=date_now)
 
 
-
 @app.route('/purchasePlaces', methods=['POST'])
 def purchasePlaces():
     competition = [c for c in competitions if c['name'] == request.form['competition']][0]

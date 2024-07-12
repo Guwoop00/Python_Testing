@@ -71,7 +71,7 @@ To perform all unit and integration tests, enter the command:
 pytest tests
 ```
 
-### Test de performances
+### Perf tests
 
 It is possible to perform a performance test using the Locust module [Locust](https://locust.io) (version 2.7.2).
 To start the test server, enter the command:
@@ -81,3 +81,8 @@ locust -f tests/perf_tests/locustfile.py --host http://127.0.0.1:5000 --run-time
 ```
 
 Go to the address [http://localhost:8089](http://localhost:8089)
+
+
+### Coverage html
+
+![coverage_screenshot](htmlcov/coverage_screenshot.png)
