@@ -85,4 +85,4 @@ Go to the address [http://localhost:8089](http://localhost:8089)
 
 ### Coverage html
 
-![coverage_screenshot](htmlcov/coverage_screenshot.png)
+![coverage_screenshot](tests/coverage_screenshot.png)
